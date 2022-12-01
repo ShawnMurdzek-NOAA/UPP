@@ -1,0 +1,10 @@
+CRTM Fix Files
+--------------
+
+On Jet, use fix files in /lfs1/BMC/nrtrr/FIX_EXEC_MODULE/crtm/CRTM_v2.2.6/
+
+
+Control Text Files (Flat Text Files)
+------------------------------------
+
+For WRF simulations, I recommend using parm/postxconfig-NT-hrrr.txt
