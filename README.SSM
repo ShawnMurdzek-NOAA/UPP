@@ -8,3 +8,10 @@ Control Text Files (Flat Text Files)
 ------------------------------------
 
 For WRF simulations, I recommend using parm/postxconfig-NT-hrrr.txt
+
+
+Working on GitHub
+-----------------
+
+Push changes to the release/upp_v11.0.0 branch. I prefer this branch b/c it is a stable release,
+rather than the development branch
