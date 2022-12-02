@@ -365,6 +365,9 @@ fmn=$((10#${fmn} + ${incrementmin}))
 if [ $fmn -eq 60 ]; then
   fmn=00
   fhr=$((10#${fhr} + 1))
+  if [ $fhr -lt 10 ]; then
+    fhr=0${fhr}
+  fi
 fi
 
 done
