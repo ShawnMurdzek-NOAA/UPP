@@ -569,7 +569,7 @@
       
 ! SSM 20220119: Add NSSL microphysics option
       if(imp_physics==2 .or. imp_physics==6 .or.                      &
-         imp_physics==8 .or. imp_physics==9 .or. imp_physics==28      &
+         imp_physics==8 .or. imp_physics==9 .or. imp_physics==28 .or. &
          imp_physics==17 .or. imp_physics==18 .or. imp_physics==22)then
       VarName='QGRAUP'
       call getVariable(fileName,DateStr,DataHandle,VarName,DUM3D,         &
@@ -586,7 +586,7 @@
       end if  
 
 ! SSM 20220119: Add NSSL microphysics option
-      if(imp_physics==8 .or. imp_physics==9 .or. imp_physics==28      &
+      if(imp_physics==8 .or. imp_physics==9 .or. imp_physics==28 .or. &
          imp_physics==17 .or. imp_physics==18 .or. imp_physics==22)then
       VarName='QNICE'
       call getVariable(fileName,DateStr,DataHandle,VarName,DUM3D,        &
