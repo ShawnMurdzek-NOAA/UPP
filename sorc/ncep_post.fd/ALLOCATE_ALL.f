@@ -158,6 +158,11 @@
       allocate(DBZC(ista_2l:iend_2u,jsta_2l:jend_2u,lm))
       allocate(mcvg(ista_2l:iend_2u,jsta_2l:jend_2u,lm))
       allocate(NLICE(ista_2l:iend_2u,jsta_2l:jend_2u,lm))
+! SSM 20220119: Add microphysical fields for NSSL scheme
+      allocate(QQH(ista_2l:iend_2u,jsta_2l:jend_2u,lm))
+      allocate(QQNS(ista_2l:iend_2u,jsta_2l:jend_2u,lm))
+      allocate(QQNG(ista_2l:iend_2u,jsta_2l:jend_2u,lm))
+      allocate(QQNH(ista_2l:iend_2u,jsta_2l:jend_2u,lm))
 !Initialization
 !$omp parallel do private(i,j,l)
       do l=1,lm
@@ -190,6 +195,11 @@
             DBZC(i,j,l)=spval
             mcvg(i,j,l)=spval
             NLICE(i,j,l)=spval
+! SSM 20220119: Add microphysical fields for NSSL scheme
+            QQH(i,j,l)=spval
+            QQNS(i,j,l)=spval
+            QQNG(i,j,l)=spval
+            QQNH(i,j,l)=spval
           enddo
         enddo
       enddo

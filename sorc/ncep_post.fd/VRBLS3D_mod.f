@@ -82,6 +82,8 @@
       ,catedr(:,:,:),mwt(:,:,:),gtg(:,:,:) &
 
 ! AQF
-      ,ozcon(:,:,:),pmtf(:,:,:)
+      ,ozcon(:,:,:),pmtf(:,:,:) &
+! SSM 20220119: Add fields for NSSL scheme
+      ,qqns(:,:,:),qqng(:,:,:),qqh(:,:,:),qqnh(:,:,:)
 
       end module vrbls3d

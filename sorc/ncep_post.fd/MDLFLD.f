@@ -86,7 +86,7 @@
               qqr, qqs, cfr, cfr_raw, dbz, dbzr, dbzi, dbzc, qqw, nlice, nrain, qqg, zint, qqni,&
               qqnr, qqnw, qqnwfa, qqnifa, uh, vh, mcvg, omga, wh, q2, ttnd, rswtt, &
               rlwtt, train, tcucn, o3, rhomid, dpres, el_pbl, pint, icing_gfip, icing_gfis, &
-              catedr,mwt,gtg, REF_10CM, pmtf, ozcon
+              catedr,mwt,gtg, REF_10CM, pmtf, ozcon, qqns, qqng, qqh, qqnh
 
       use vrbls2d, only: slp, hbot, htop, cnvcfr, cprate, cnvcfr, sfcshx,sfclhx,ustar,z0,&
               sr, prec, vis, czen, pblh, pblhgust, u10, v10, avgprec, avgcprate, &
@@ -1157,6 +1157,121 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
                  cfld=cfld+1
                  fld_info(cfld)%ifld=IAVBLFLD(IGET(754))
                  fld_info(cfld)%lvl=LVLSXML(L,IGET(754))
+!$omp parallel do private(i,j,ii,jj)
+                 do j=1,jend-jsta+1
+                   jj = jsta+j-1
+                   do i=1,iend-ista+1
+                     ii = ista+i-1
+                     datapd(i,j,cfld) = GRID1(ii,jj)
+                   enddo
+                 enddo
+               endif
+            ENDIF
+          ENDIF
+
+! SSM 20220119: Number mixing ratios for snow, graupel, and hail as well as hail
+! mass mixing ratio
+!
+!---  QNSNOW ON MDL SURFACE   --tgs
+!
+          IF (IGET(1003) > 0) THEN
+            IF (LVLS(L,IGET(1003)) > 0)THEN
+               LL=LM-L+1
+!$omp parallel do private(i,j)
+               DO J=JSTA,JEND
+                 DO I=ista,iend
+                   if(QQNS(I,J,LL) < 1.e-8) QQNS(I,J,LL) = 0.     !tgs
+                   GRID1(I,J) = QQNS(I,J,LL)
+                 ENDDO
+               ENDDO
+               if(grib=="grib2" )then
+                 cfld=cfld+1
+                 fld_info(cfld)%ifld=IAVBLFLD(IGET(1003))
+                 fld_info(cfld)%lvl=LVLSXML(L,IGET(1003))
+!$omp parallel do private(i,j,ii,jj)
+                 do j=1,jend-jsta+1
+                   jj = jsta+j-1
+                   do i=1,iend-ista+1
+                     ii = ista+i-1
+                     datapd(i,j,cfld) = GRID1(ii,jj)
+                   enddo
+                 enddo
+               endif
+            ENDIF
+          ENDIF
+!
+!---  QNGRAUPEL ON MDL SURFACE   --tgs
+!
+          IF (IGET(1004) > 0) THEN
+            IF (LVLS(L,IGET(1004)) > 0)THEN
+               LL=LM-L+1
+!$omp parallel do private(i,j)
+               DO J=JSTA,JEND
+                 DO I=ista,iend
+                   if(QQNG(I,J,LL) < 1.e-8) QQNG(I,J,LL) = 0.     !tgs
+                   GRID1(I,J) = QQNG(I,J,LL)
+                 ENDDO
+               ENDDO
+               if(grib=="grib2" )then
+                 cfld=cfld+1
+                 fld_info(cfld)%ifld=IAVBLFLD(IGET(1004))
+                 fld_info(cfld)%lvl=LVLSXML(L,IGET(1004))
+!$omp parallel do private(i,j,ii,jj)
+                 do j=1,jend-jsta+1
+                   jj = jsta+j-1
+                   do i=1,iend-ista+1
+                     ii = ista+i-1
+                     datapd(i,j,cfld) = GRID1(ii,jj)
+                   enddo
+                 enddo
+               endif
+            ENDIF
+          ENDIF
+!
+!---  QHAIL ON MDL SURFACE   --tgs
+!
+          IF (IGET(1005) > 0) THEN
+            IF (LVLS(L,IGET(1005)) > 0)THEN
+               LL=LM-L+1
+!$omp parallel do private(i,j)
+               DO J=JSTA,JEND
+                 DO I=ista,iend
+                   if(QQH(I,J,LL) < 1.e-8) QQH(I,J,LL) = 0.     !tgs
+                   GRID1(I,J) = QQH(I,J,LL)
+                 ENDDO
+               ENDDO
+               if(grib=="grib2" )then
+                 cfld=cfld+1
+                 fld_info(cfld)%ifld=IAVBLFLD(IGET(1005))
+                 fld_info(cfld)%lvl=LVLSXML(L,IGET(1005))
+!$omp parallel do private(i,j,ii,jj)
+                 do j=1,jend-jsta+1
+                   jj = jsta+j-1
+                   do i=1,iend-ista+1
+                     ii = ista+i-1
+                     datapd(i,j,cfld) = GRID1(ii,jj)
+                   enddo
+                 enddo
+               endif
+            ENDIF
+          ENDIF
+!
+!---  QNHAIL ON MDL SURFACE   --tgs
+!
+          IF (IGET(1006) > 0) THEN
+            IF (LVLS(L,IGET(1006)) > 0)THEN
+               LL=LM-L+1
+!$omp parallel do private(i,j)
+               DO J=JSTA,JEND
+                 DO I=ista,iend
+                   if(QQNH(I,J,LL) < 1.e-8) QQNH(I,J,LL) = 0.     !tgs
+                   GRID1(I,J) = QQNH(I,J,LL)
+                 ENDDO
+               ENDDO
+               if(grib=="grib2" )then
+                 cfld=cfld+1
+                 fld_info(cfld)%ifld=IAVBLFLD(IGET(1006))
+                 fld_info(cfld)%lvl=LVLSXML(L,IGET(1006))
 !$omp parallel do private(i,j,ii,jj)
                  do j=1,jend-jsta+1
                    jj = jsta+j-1

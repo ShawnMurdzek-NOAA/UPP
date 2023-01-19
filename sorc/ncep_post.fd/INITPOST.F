@@ -27,7 +27,7 @@
       use vrbls3d, only: t, u, uh, v, vh, wh, q, pmid, t, omga, pint, alpint,      &
               qqr, qqs, qqi, qqg, qqnw, qqni,qqnr, cwm, qqw, qqi, qqr, qqs, extcof55,&
               f_ice, f_rain, f_rimef, q2, zint, zmid, ttnd, cfr, cfr_raw, qc_bl, REF_10CM,  &
-              qqnwfa,qqnifa,taod5503d,aextc55
+              qqnwfa,qqnifa,taod5503d,aextc55,qqns,qqng,qqh,qqnh
       use vrbls2d, only: tmax, qrmax, htop, hbot, cuppt, fis, cfrach, cfracl,      &
               sr, cfrach, cfracm, wspd10max, w_up_max, w_dn_max, w_mean, refd_max, &
               up_heli_max, up_heli_max16, grpl_max, up_heli, up_heli16,            &
@@ -454,6 +454,12 @@
       qqnr=0. 
       cwm=0.
 
+! SSM 20220119: Add more microphysical variables for NSSL scheme
+      qqh=0.
+      qqns=0.
+      qqng=0.
+      qqnh=0.
+
 ! extinction coef for aerosol
       extcof55=0.
       aextc55=0.
@@ -561,9 +567,10 @@
       end do
       end if
       
-
+! SSM 20220119: Add NSSL microphysics option
       if(imp_physics==2 .or. imp_physics==6 .or.                      &
-         imp_physics==8 .or. imp_physics==9 .or. imp_physics==28)then
+         imp_physics==8 .or. imp_physics==9 .or. imp_physics==28      &
+         imp_physics==17 .or. imp_physics==18 .or. imp_physics==22)then
       VarName='QGRAUP'
       call getVariable(fileName,DateStr,DataHandle,VarName,DUM3D,         &
         IM+1,1,JM+1,LM+1,IM, JS,JE,LM)
@@ -578,7 +585,9 @@
 !     + print*,'sample QGRAUP= ',qqg(ii,jj,ll)
       end if  
 
-      if(imp_physics==8 .or. imp_physics==9 .or.imp_physics==28)then
+! SSM 20220119: Add NSSL microphysics option
+      if(imp_physics==8 .or. imp_physics==9 .or. imp_physics==28      &
+         imp_physics==17 .or. imp_physics==18 .or. imp_physics==22)then
       VarName='QNICE'
       call getVariable(fileName,DateStr,DataHandle,VarName,DUM3D,        &
         IM+1,1,JM+1,LM+1,IM, JS,JE,LM)
@@ -600,6 +609,76 @@
             qqnr ( i, j, l ) = dum3d ( i, j, l )
         if(i==im/2.and.j==(jsta+jend)/2)print*,'sample QQNR= ',    &
           i,j,l,QQNR ( i, j, l )
+        end do
+       end do
+      end do
+      end if
+
+! SSM 20220119: Add QNSNOW, QNGRAUPEL, and QNDROP
+! NOTE: I'm pretty sure QNDROP is cloud droplet number in imp_physics =
+! 18, but it might not be in imp_physics = 17 or 22.
+      if(imp_physics==17 .or. imp_physics==18 .or. imp_physics==22)then
+      VarName='QNDROP'
+      call getVariable(fileName,DateStr,DataHandle,VarName,DUM3D,        &
+        IM+1,1,JM+1,LM+1,IM, JS,JE,LM)
+      do l = 1, lm
+       do j = jsta_2l, jend_2u
+        do i = 1, im
+            qqnw ( i, j, l ) = dum3d ( i, j, l )
+        if(i==im/2.and.j==(jsta+jend)/2)print*,'sample QQNW= ',    &
+          i,j,l,QQNW ( i, j, l )      
+        end do
+       end do
+      end do
+      VarName='QNSNOW'
+      call getVariable(fileName,DateStr,DataHandle,VarName,DUM3D,        &
+        IM+1,1,JM+1,LM+1,IM, JS,JE,LM)
+      do l = 1, lm
+       do j = jsta_2l, jend_2u
+        do i = 1, im
+            qqns ( i, j, l ) = dum3d ( i, j, l )
+        if(i==im/2.and.j==(jsta+jend)/2)print*,'sample QQNS= ',    &
+          i,j,l,QQNS ( i, j, l )      
+        end do
+       end do
+      end do
+      VarName='QNGRAUPEL'
+      call getVariable(fileName,DateStr,DataHandle,VarName,DUM3D,        &
+        IM+1,1,JM+1,LM+1,IM, JS,JE,LM)
+      do l = 1, lm
+       do j = jsta_2l, jend_2u
+        do i = 1, im
+            qqng ( i, j, l ) = dum3d ( i, j, l )
+        if(i==im/2.and.j==(jsta+jend)/2)print*,'sample QQNG= ',    &
+          i,j,l,QQNG ( i, j, l )
+        end do
+       end do
+      end do
+      end if
+
+! SSM 20220119: Add QHAIL and QNHAIL
+      if(imp_physics==17 .or. imp_physics==18)then
+      VarName='QHAIL'
+      call getVariable(fileName,DateStr,DataHandle,VarName,DUM3D,        &
+        IM+1,1,JM+1,LM+1,IM, JS,JE,LM)
+      do l = 1, lm
+       do j = jsta_2l, jend_2u
+        do i = 1, im
+            qqh ( i, j, l ) = dum3d ( i, j, l )
+        if(i==im/2.and.j==(jsta+jend)/2)print*,'sample QQH= ',    &
+          i,j,l,QQH ( i, j, l )      
+        end do
+       end do
+      end do
+      VarName='QNHAIL'
+      call getVariable(fileName,DateStr,DataHandle,VarName,DUM3D,        &
+        IM+1,1,JM+1,LM+1,IM, JS,JE,LM)
+      do l = 1, lm
+       do j = jsta_2l, jend_2u
+        do i = 1, im
+            qqnh ( i, j, l ) = dum3d ( i, j, l )
+        if(i==im/2.and.j==(jsta+jend)/2)print*,'sample QQNH= ',    &
+          i,j,l,QQNH ( i, j, l )
         end do
        end do
       end do
@@ -677,6 +756,10 @@
           END IF
           IF(QQG(I,J,L)<SPVAL)THEN
            CWM(I,J,L)=CWM(I,J,L)+QQG(I,J,L)
+          END IF 
+! SSM 20220119: Add hail mixing ratio from NSSL scheme
+          IF(QQH(I,J,L)<SPVAL)THEN
+           CWM(I,J,L)=CWM(I,J,L)+QQH(I,J,L)
           END IF 
          end do
         end do
