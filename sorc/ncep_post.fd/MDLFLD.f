@@ -1236,7 +1236,7 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !$omp parallel do private(i,j)
                DO J=JSTA,JEND
                  DO I=ista,iend
-                   if(QQH(I,J,LL) < 1.e-8) QQH(I,J,LL) = 0.     !tgs
+                   if(QQH(I,J,LL) < 1.e-12) QQH(I,J,LL) = 0.     !tgs
                    GRID1(I,J) = QQH(I,J,LL)
                  ENDDO
                ENDDO
