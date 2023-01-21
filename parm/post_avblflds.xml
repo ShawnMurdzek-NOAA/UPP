@@ -6739,9 +6739,9 @@
 
     <param>
        <post_avblfldidx>752</post_avblfldidx>
-       <shortname>GSD_NCIP_ON_HYBRID_LVL</shortname>
-       <longname>Number concentration for ice particles on hybrid level</longname>
-       <pname>NCIP</pname>
+       <shortname>NCCICE_ON_HYBRID_LVL</shortname>
+       <longname>ice number mixing ratio</longname>
+       <pname>NCCICE</pname>
        <fixed_sfc1_type>hybrid_lvl</fixed_sfc1_type>
        <scale>3.0</scale>
     </param>
@@ -6757,8 +6757,9 @@
 
     <param>
        <post_avblfldidx>754</post_avblfldidx>
-       <shortname>GSD_NCRAIN_ON_HYBRID_LVL</shortname>
-       <pname>NCRAIN</pname>
+       <shortname>SPNCR_ON_HYBRID_LVL</shortname>
+       <longname>rain number mixing ratio</longname>
+       <pname>SPNCR</pname>
        <fixed_sfc1_type>hybrid_lvl</fixed_sfc1_type>
        <scale>3.0</scale>
     </param>
