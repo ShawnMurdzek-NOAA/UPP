@@ -3236,8 +3236,12 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 ! Use WRF Thompson reflectivity diagnostic from RAPR model output
 ! Use unipost reflectivity diagnostic otherwise
 !
+! SSM 20220123: Add option for NSSL microphysics
+!
       IF (IGET(768) > 0) THEN
-        IF(MODELNAME == 'RAPR' .AND. (IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28)) THEN
+        IF(MODELNAME == 'RAPR' .AND. (IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28 .or. &
+                                      IMP_PHYSICS == 17 .or. IMP_PHYSICS == 18 .or. &
+                                      IMP_PHYSICS == 22)) THEN
           DO J=JSTA,JEND
             DO I=ista,iend
               GRID1(I,J) = -999.
