@@ -689,7 +689,12 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
                  endif
                IF (Model_Radar) THEN
                  ze_nc=10.**(0.1*REF_10CM(I,J,L))
-                 DBZ(I,J,L) = ze_nc+CUREFL(I,J)
+! SSM 20220201: For NSSL scheme, just used REF_10CM
+                 IF (IMP_PHYSICS == 17 .OR. IMP_PHYSICS == 18 .OR. IMP_PHYSICS == 22) THEN
+                   DBZ(I,J,L) = ze_nc
+                 ELSE
+                   DBZ(I,J,L) = ze_nc+CUREFL(I,J)
+                 ENDIF
                ELSE 
                  DBZ(I,J,L) = DBZR(I,J,L) + DBZI(I,J,L) + CUREFL(I,J)
                END IF
@@ -1395,8 +1400,12 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !
 ! Chuang Feb 2015: use Thompson reflectivity direct output for all
 ! models 
+!
+! SSM 20220126: Use NSSL reflectivity direct output
 ! 
-               IF(IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28) THEN
+               IF(IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28 .or. &
+                  IMP_PHYSICS == 17 .or. IMP_PHYSICS == 18 .or. &
+                  IMP_PHYSICS == 22) THEN
 !$omp parallel do private(i,j)
                  DO J=JSTA,JEND
                    DO I=ista,iend
@@ -3025,8 +3034,14 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !
 !     COMPOSITE RADAR REFLECTIVITY (maximum dBZ in each column)
 !
+! SSM 20220126: Add switches for NSSL MP scheme
+!
       IF (IGET(252) > 0) THEN
-        IF(IMP_PHYSICS /= 8 .and. IMP_PHYSICS /= 28) THEN
+        IF(IMP_PHYSICS /= 8 .and. IMP_PHYSICS /= 28 .and. &
+           IMP_PHYSICS /= 17 .and. IMP_PHYSICS /= 18 .and. &
+           IMP_PHYSICS /= 22) THEN
+! SSM 20220130: Debugging
+          print*, 'REFC: Using DBZ'
 !$omp parallel do private(i,j,l)
           DO J=JSTA,JEND
             DO I=ista,iend
@@ -3042,7 +3057,9 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 ! CRA Use WRF Thompson reflectivity diagnostic from RAPR model output
 !     Use unipost reflectivity diagnostic otherwise
 !
-          IF(IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28) THEN
+          IF(IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28 .or. &
+             IMP_PHYSICS == 17 .or. IMP_PHYSICS == 18 .or. &
+             IMP_PHYSICS == 22) THEN
 !NMMB does not have composite radar ref in model output
            IF(MODELNAME=='NMM' .and. gridtype=='B' .or.  & 
               MODELNAME=='NCAR'.or.  MODELNAME=='FV3R' .or. &
@@ -3057,6 +3074,8 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
                 ENDDO
               ENDDO 
             ELSE
+! SSM 20220130: Debugging
+              print*, 'REFC: Using REFC_10CM from WRF'
 !$omp parallel do private(i,j)
               DO J=JSTA,JEND
                 DO I=ista,iend
@@ -3335,8 +3354,12 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 ! Use WRF Thompson reflectivity diagnostic from RAPR model output
 ! Use unipost reflectivity diagnostic otherwise
 !
+! SSM 20220201: Add switch for NSSL MP schemes
+!
       IF (IGET(770) > 0) THEN
-        IF(MODELNAME == 'RAPR' .AND. (IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28)) THEN
+        IF(MODELNAME == 'RAPR' .AND. (IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28 .or. &
+                                      IMP_PHYSICS == 17 .or. IMP_PHYSICS == 18 .or. &
+                                      IMP_PHYSICS == 22)) THEN
           DO J=JSTA,JEND
             DO I=ista,iend
               GRID1(I,J) = 0.0
@@ -3591,8 +3614,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !     Use unipost reflectivity diagnostic otherwise
 ! Chuang: use Thompson reflectivity direct output for all
 ! models 
+!
+! SSM 20220201: Add switch for NSSL MP scheme
 ! 
-         IF(IMP_PHYSICS==8 .or. IMP_PHYSICS==28) THEN 
+         IF(IMP_PHYSICS==8 .or. IMP_PHYSICS==28 .or. IMP_PHYSICS==17 .or. &
+            IMP_PHYSICS==18 .or. IMP_PHYSICS==22) THEN 
 !$omp parallel do private(i,j)
            DO J=JSTA,JEND
            DO I=ista,iend

@@ -67,15 +67,15 @@ set -x
 # Set relevant paths and data information
 # This script assumes you created a directory $DOMAINPATH/postprd
 # as recommended in the users guide where UPP will output.
-export TOP_DIR=/lfs4/BMC/wrfruc/murdzek
-export UPP_OUT=${TOP_DIR}/nature_run_10km_io102/upp_test/out
-export UPP_HOME=${TOP_DIR}/UPP
+export TOP_DIR=/scratch1/BMC/wrfruc/murdzek
+export UPP_OUT=${TOP_DIR}/upp_test
+export UPP_HOME=${TOP_DIR}/src/UPP
 export POSTEXEC=${UPP_HOME}/tests/install/bin
-export modelDataPath=${TOP_DIR}/nature_run_10km_io102/WRF/run
-export txtCntrlFile=${UPP_HOME}/parm/postxconfig-NT-hrrr.txt
+export modelDataPath=${TOP_DIR}/upp_test
+export txtCntrlFile=${UPP_HOME}/parm/postxconfig-NT-wrf_SSM.txt
 
 # Location of CRTM fix file
-export CRTM="/lfs1/BMC/nrtrr/FIX_EXEC_MODULE/crtm/CRTM_v2.2.6"
+export CRTM="/scratch2/BMC/rtrr/FIX_RRFS/crtm/CRTM_v2.4.0/"
 
 # Specify model (WRF is the only option)
 export model="WRF"
@@ -85,12 +85,12 @@ export inFormat="netcdfpara"
 export outFormat="grib2"
 
 # Set date/time information
-export startdate=202107242300
-export lastdate=202107242315
+export startdate=202204291800
+export lastdate=202204291815
 export incrementmin=15
 
 # Set run command: 
-export RUN_COMMAND="srun -n 4 ${POSTEXEC}/upp.x "
+export RUN_COMMAND="srun -n 50 ${POSTEXEC}/upp.x "
 
 # Shouldn't need to edit these.
 # tmmark is an variable used as the file extention of the output
@@ -277,7 +277,7 @@ MM=`echo $currentdate | cut -c11-12`
 # Create model file name (inFileName)
 if [ ${model} == "WRF" ]; then
    if [ ${inFormat} == "netcdfpara" ]; then
-      inFileName=${modelDataPath}/wrfout_d01_${YYYY}-${mm}-${DD}_${HH}_${MM}_00
+      inFileName=${modelDataPath}/wrfout_d01_${YYYY}-${mm}-${DD}_${HH}:${MM}:00
    fi
 fi
 
@@ -351,9 +351,11 @@ if [[ ${err1} -ne 0 || ${err2} -ne 0 || ${err3} -ne 0 ]]; then
     exit
 fi 
 
+# append wrftwo files to wrfnat and wrfprs. This is needed in order for pygraf to run properly
+cat WRFPRS${suffix} WRFTWO${suffix} > ../wrfprs_${currentdate}.grib2
+cat WRFNAT${suffix} WRFTWO${suffix} > ../wrfnat_${currentdate}.grib2
+
 # move UPP output files, input file, and UPP text output
-mv WRFPRS${suffix} ../wrfprs_${currentdate}.grib2
-mv WRFNAT${suffix} ../wrfnat_${currentdate}.grib2
 mv WRFTWO${suffix} ../wrftwo_${currentdate}.grib2
 mv itag ../itag.${currentdate}
 mv upp.${currentdate}.out ../

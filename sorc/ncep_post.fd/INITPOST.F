@@ -256,7 +256,10 @@
        do j = jsta_2l, jend_2u
         do i = 1, im
             t ( i, j, l ) = dum3d ( i, j, l ) + 300.
-!MEB  this is theta the 300 is my guess at what T0 is 
+!MEB  this is theta the 300 is my guess at what T0 is
+! SSM 20220126 Confirmed that t0 = 300. This can be found in
+! share/module_model_constant.F in WRF. Note that this is different from
+! T00! 
         end do
        end do
       end do
