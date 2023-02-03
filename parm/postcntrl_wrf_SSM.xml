@@ -19,36 +19,6 @@
     <comprs_type>lossless</comprs_type>
 
        <param>
-          <shortname>TMP_ON_ISOBARIC_SFC</shortname>
-          <level>50000. 70000. 85000. 92500. 100000.</level>
-          <scale>-4.0</scale>
-       </param>
-
-       <param>
-          <shortname>DPT_ON_ISOBARIC_SFC</shortname>
-          <level>50000. 70000. 85000. 92500. 100000.</level>
-          <scale>-4.0</scale>
-       </param>
-
-       <param>
-          <shortname>HGT_ON_ISOBARIC_SFC</shortname>
-          <level>50000. 70000. 85000. 100000.</level>
-          <scale>-5.0</scale>
-       </param>
-
-       <param>
-          <shortname>UGRD_ON_ISOBARIC_SFC</shortname>
-          <level>25000. 30000. 50000. 70000. 85000. 92500. 100000.</level>
-          <scale>-4.0</scale>
-       </param>
-
-       <param>
-          <shortname>VGRD_ON_ISOBARIC_SFC</shortname>
-          <level>25000. 30000. 50000. 70000. 85000. 92500. 100000.</level>
-          <scale>-4.0</scale>
-       </param>
-
-       <param>
           <shortname>VEG_ON_SURFACE</shortname>
           <scale>3.0</scale>
        </param>
@@ -791,13 +761,6 @@
 
        <param>
           <shortname>HGT_ON_SURFACE</shortname>
-          <scale>-5.0</scale>
-       </param>
-
-       <param>
-          <shortname>DZDT_ON_ISOBARIC_SFC</shortname>
-          <pname>DZDT</pname>
-          <level>70000.</level>
           <scale>-5.0</scale>
        </param>
 
