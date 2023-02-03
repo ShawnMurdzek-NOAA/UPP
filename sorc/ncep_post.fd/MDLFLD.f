@@ -86,7 +86,7 @@
               qqr, qqs, cfr, cfr_raw, dbz, dbzr, dbzi, dbzc, qqw, nlice, nrain, qqg, zint, qqni,&
               qqnr, qqnw, qqnwfa, qqnifa, uh, vh, mcvg, omga, wh, q2, ttnd, rswtt, &
               rlwtt, train, tcucn, o3, rhomid, dpres, el_pbl, pint, icing_gfip, icing_gfis, &
-              catedr,mwt,gtg, REF_10CM, pmtf, ozcon
+              catedr,mwt,gtg, REF_10CM, pmtf, ozcon, qqns, qqng, qqh, qqnh
 
       use vrbls2d, only: slp, hbot, htop, cnvcfr, cprate, cnvcfr, sfcshx,sfclhx,ustar,z0,&
               sr, prec, vis, czen, pblh, pblhgust, u10, v10, avgprec, avgcprate, &
@@ -689,7 +689,12 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
                  endif
                IF (Model_Radar) THEN
                  ze_nc=10.**(0.1*REF_10CM(I,J,L))
-                 DBZ(I,J,L) = ze_nc+CUREFL(I,J)
+! SSM 20220201: For NSSL scheme, just used REF_10CM
+                 IF (IMP_PHYSICS == 17 .OR. IMP_PHYSICS == 18 .OR. IMP_PHYSICS == 22) THEN
+                   DBZ(I,J,L) = ze_nc
+                 ELSE
+                   DBZ(I,J,L) = ze_nc+CUREFL(I,J)
+                 ENDIF
                ELSE 
                  DBZ(I,J,L) = DBZR(I,J,L) + DBZI(I,J,L) + CUREFL(I,J)
                END IF
@@ -1168,6 +1173,121 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
                endif
             ENDIF
           ENDIF
+
+! SSM 20220119: Number mixing ratios for snow, graupel, and hail as well as hail
+! mass mixing ratio
+!
+!---  QNSNOW ON MDL SURFACE   --tgs
+!
+          IF (IGET(1003) > 0) THEN
+            IF (LVLS(L,IGET(1003)) > 0)THEN
+               LL=LM-L+1
+!$omp parallel do private(i,j)
+               DO J=JSTA,JEND
+                 DO I=ista,iend
+                   if(QQNS(I,J,LL) < 1.e-8) QQNS(I,J,LL) = 0.     !tgs
+                   GRID1(I,J) = QQNS(I,J,LL)
+                 ENDDO
+               ENDDO
+               if(grib=="grib2" )then
+                 cfld=cfld+1
+                 fld_info(cfld)%ifld=IAVBLFLD(IGET(1003))
+                 fld_info(cfld)%lvl=LVLSXML(L,IGET(1003))
+!$omp parallel do private(i,j,ii,jj)
+                 do j=1,jend-jsta+1
+                   jj = jsta+j-1
+                   do i=1,iend-ista+1
+                     ii = ista+i-1
+                     datapd(i,j,cfld) = GRID1(ii,jj)
+                   enddo
+                 enddo
+               endif
+            ENDIF
+          ENDIF
+!
+!---  QNGRAUPEL ON MDL SURFACE   --tgs
+!
+          IF (IGET(1004) > 0) THEN
+            IF (LVLS(L,IGET(1004)) > 0)THEN
+               LL=LM-L+1
+!$omp parallel do private(i,j)
+               DO J=JSTA,JEND
+                 DO I=ista,iend
+                   if(QQNG(I,J,LL) < 1.e-8) QQNG(I,J,LL) = 0.     !tgs
+                   GRID1(I,J) = QQNG(I,J,LL)
+                 ENDDO
+               ENDDO
+               if(grib=="grib2" )then
+                 cfld=cfld+1
+                 fld_info(cfld)%ifld=IAVBLFLD(IGET(1004))
+                 fld_info(cfld)%lvl=LVLSXML(L,IGET(1004))
+!$omp parallel do private(i,j,ii,jj)
+                 do j=1,jend-jsta+1
+                   jj = jsta+j-1
+                   do i=1,iend-ista+1
+                     ii = ista+i-1
+                     datapd(i,j,cfld) = GRID1(ii,jj)
+                   enddo
+                 enddo
+               endif
+            ENDIF
+          ENDIF
+!
+!---  QHAIL ON MDL SURFACE   --tgs
+!
+          IF (IGET(1005) > 0) THEN
+            IF (LVLS(L,IGET(1005)) > 0)THEN
+               LL=LM-L+1
+!$omp parallel do private(i,j)
+               DO J=JSTA,JEND
+                 DO I=ista,iend
+                   if(QQH(I,J,LL) < 1.e-12) QQH(I,J,LL) = 0.     !tgs
+                   GRID1(I,J) = QQH(I,J,LL)
+                 ENDDO
+               ENDDO
+               if(grib=="grib2" )then
+                 cfld=cfld+1
+                 fld_info(cfld)%ifld=IAVBLFLD(IGET(1005))
+                 fld_info(cfld)%lvl=LVLSXML(L,IGET(1005))
+!$omp parallel do private(i,j,ii,jj)
+                 do j=1,jend-jsta+1
+                   jj = jsta+j-1
+                   do i=1,iend-ista+1
+                     ii = ista+i-1
+                     datapd(i,j,cfld) = GRID1(ii,jj)
+                   enddo
+                 enddo
+               endif
+            ENDIF
+          ENDIF
+!
+!---  QNHAIL ON MDL SURFACE   --tgs
+!
+          IF (IGET(1006) > 0) THEN
+            IF (LVLS(L,IGET(1006)) > 0)THEN
+               LL=LM-L+1
+!$omp parallel do private(i,j)
+               DO J=JSTA,JEND
+                 DO I=ista,iend
+                   if(QQNH(I,J,LL) < 1.e-8) QQNH(I,J,LL) = 0.     !tgs
+                   GRID1(I,J) = QQNH(I,J,LL)
+                 ENDDO
+               ENDDO
+               if(grib=="grib2" )then
+                 cfld=cfld+1
+                 fld_info(cfld)%ifld=IAVBLFLD(IGET(1006))
+                 fld_info(cfld)%lvl=LVLSXML(L,IGET(1006))
+!$omp parallel do private(i,j,ii,jj)
+                 do j=1,jend-jsta+1
+                   jj = jsta+j-1
+                   do i=1,iend-ista+1
+                     ii = ista+i-1
+                     datapd(i,j,cfld) = GRID1(ii,jj)
+                   enddo
+                 enddo
+               endif
+            ENDIF
+          ENDIF
 ! QNWFA ON MDL SURFACE   --tgs
 !
           IF (IGET(766) > 0) THEN
@@ -1280,8 +1400,12 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !
 ! Chuang Feb 2015: use Thompson reflectivity direct output for all
 ! models 
+!
+! SSM 20220126: Use NSSL reflectivity direct output
 ! 
-               IF(IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28) THEN
+               IF(IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28 .or. &
+                  IMP_PHYSICS == 17 .or. IMP_PHYSICS == 18 .or. &
+                  IMP_PHYSICS == 22) THEN
 !$omp parallel do private(i,j)
                  DO J=JSTA,JEND
                    DO I=ista,iend
@@ -2910,8 +3034,14 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !
 !     COMPOSITE RADAR REFLECTIVITY (maximum dBZ in each column)
 !
+! SSM 20220126: Add switches for NSSL MP scheme
+!
       IF (IGET(252) > 0) THEN
-        IF(IMP_PHYSICS /= 8 .and. IMP_PHYSICS /= 28) THEN
+        IF(IMP_PHYSICS /= 8 .and. IMP_PHYSICS /= 28 .and. &
+           IMP_PHYSICS /= 17 .and. IMP_PHYSICS /= 18 .and. &
+           IMP_PHYSICS /= 22) THEN
+! SSM 20220130: Debugging
+          print*, 'REFC: Using DBZ'
 !$omp parallel do private(i,j,l)
           DO J=JSTA,JEND
             DO I=ista,iend
@@ -2927,7 +3057,9 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 ! CRA Use WRF Thompson reflectivity diagnostic from RAPR model output
 !     Use unipost reflectivity diagnostic otherwise
 !
-          IF(IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28) THEN
+          IF(IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28 .or. &
+             IMP_PHYSICS == 17 .or. IMP_PHYSICS == 18 .or. &
+             IMP_PHYSICS == 22) THEN
 !NMMB does not have composite radar ref in model output
            IF(MODELNAME=='NMM' .and. gridtype=='B' .or.  & 
               MODELNAME=='NCAR'.or.  MODELNAME=='FV3R' .or. &
@@ -2942,6 +3074,8 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
                 ENDDO
               ENDDO 
             ELSE
+! SSM 20220130: Debugging
+              print*, 'REFC: Using REFC_10CM from WRF'
 !$omp parallel do private(i,j)
               DO J=JSTA,JEND
                 DO I=ista,iend
@@ -3121,8 +3255,12 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 ! Use WRF Thompson reflectivity diagnostic from RAPR model output
 ! Use unipost reflectivity diagnostic otherwise
 !
+! SSM 20220123: Add option for NSSL microphysics
+!
       IF (IGET(768) > 0) THEN
-        IF(MODELNAME == 'RAPR' .AND. (IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28)) THEN
+        IF(MODELNAME == 'RAPR' .AND. (IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28 .or. &
+                                      IMP_PHYSICS == 17 .or. IMP_PHYSICS == 18 .or. &
+                                      IMP_PHYSICS == 22)) THEN
           DO J=JSTA,JEND
             DO I=ista,iend
               GRID1(I,J) = -999.
@@ -3216,8 +3354,12 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 ! Use WRF Thompson reflectivity diagnostic from RAPR model output
 ! Use unipost reflectivity diagnostic otherwise
 !
+! SSM 20220201: Add switch for NSSL MP schemes
+!
       IF (IGET(770) > 0) THEN
-        IF(MODELNAME == 'RAPR' .AND. (IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28)) THEN
+        IF(MODELNAME == 'RAPR' .AND. (IMP_PHYSICS == 8 .or. IMP_PHYSICS == 28 .or. &
+                                      IMP_PHYSICS == 17 .or. IMP_PHYSICS == 18 .or. &
+                                      IMP_PHYSICS == 22)) THEN
           DO J=JSTA,JEND
             DO I=ista,iend
               GRID1(I,J) = 0.0
@@ -3472,8 +3614,11 @@ refl_adj:           IF(REF_10CM(I,J,L)<=DBZmin) THEN
 !     Use unipost reflectivity diagnostic otherwise
 ! Chuang: use Thompson reflectivity direct output for all
 ! models 
+!
+! SSM 20220201: Add switch for NSSL MP scheme
 ! 
-         IF(IMP_PHYSICS==8 .or. IMP_PHYSICS==28) THEN 
+         IF(IMP_PHYSICS==8 .or. IMP_PHYSICS==28 .or. IMP_PHYSICS==17 .or. &
+            IMP_PHYSICS==18 .or. IMP_PHYSICS==22) THEN 
 !$omp parallel do private(i,j)
            DO J=JSTA,JEND
            DO I=ista,iend

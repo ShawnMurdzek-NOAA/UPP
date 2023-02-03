@@ -89,6 +89,11 @@
       deallocate(DBZC)
       deallocate(mcvg)
       deallocate(NLICE)
+! SSM 20220119: Add microphysical fields for NSSL scheme
+      deallocate(QQH)
+      deallocate(QQNS)
+      deallocate(QQNG)
+      deallocate(QQNH)
 ! KRS: HWRF addition for thompson reflectivity
 ! or non-ferrier physics. wrf-derived
       deallocate(REFL_10CM)

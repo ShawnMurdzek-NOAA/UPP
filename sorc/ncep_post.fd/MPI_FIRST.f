@@ -48,7 +48,8 @@
               mgdrag, cnvctvmmixing, ncnvctcfrac, cnvctumflx, cnvctdmflx, cnvctdetmflx,&
               cnvctzgdrag, cnvctmgdrag, icing_gfip, asy, ssa, duem, dusd, dudp,        &
               duwt, suem, susd, sudp, suwt, ocem, ocsd, ocdp, ocwt, bcem, bcsd,        &
-              bcdp, bcwt, ssem, sssd, ssdp, sswt, ext, dpres, rhomid
+              bcdp, bcwt, ssem, sssd, ssdp, sswt, ext, dpres,rhomid,                   &
+              qqns,qqng,qqh,qqnh
       use vrbls2d, only: wspd10max, w_up_max, w_dn_max, w_mean, refd_max, up_heli_max, &
               prate_max, fprate_max, swupt,                                            &
               up_heli_max16, grpl_max, up_heli, up_heli16, ltg1_max, ltg2_max,         &

@@ -1,3 +1,18 @@
+## SSM Notes:
+
+### CRTM Fix Files:
+
+- On Jet, use files in /lfs1/BMC/nrtrr/FIX_EXEC_MODULE/crtm/CRTM_v2.2.6/
+- on Hera, use files in /scratch2/BMC/rtrr/FIX_RRFS/crtm/CRTM_v2.4.0/
+
+### Hydrometeor Number Mixing Ratio Fields
+
+The fields SPNCR, SPNCS, SPNCG, SPNCH, NCCICE, and NCONCD are listed in
+the GRIB2 tables as being "specific number concentrations" or "number 
+concentrations" with units of kg<sup>-1</sup>. I find these names
+a little ambiguous. These quantities are all number mixing ratios that
+come directly from WRF (e.g., QNRAIN, QNSNOW, etc.) with no modification.
+
 
 # Unified Post-Processing (UPP)
 
