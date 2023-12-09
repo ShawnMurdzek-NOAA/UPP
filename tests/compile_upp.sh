@@ -57,27 +57,27 @@ fi
 PATHTR=${PATHTR:-$( cd ${MYDIR}/.. && pwd )}
 
 #Load required modulefiles
-if [[ $MACHINE_ID != "unknown" ]]; then
-   if [[ $MACHINE_ID == "wcoss2" ]]; then
-      module reset
-   else
-      module purge
-   fi
-   module use $PATHTR/modulefiles
-   if [[ $compiler == "intel" ]]; then
-      modulefile=${MACHINE_ID}
-   else
-      modulefile=${MACHINE_ID}_${compiler}
-   fi
-   if [ -f "${PATHTR}/modulefiles/${modulefile}" -o -f "${PATHTR}/modulefiles/${modulefile}.lua" ]; then
-      echo "Building for machine ${MACHINE_ID}, compiler ${compiler}"
-   else
-      echo "Modulefile does not exist for machine ${MACHINE_ID}, compiler ${compiler}"
-      exit 1
-   fi
-   module load $modulefile
+#if [[ $MACHINE_ID != "unknown" ]]; then
+#   if [[ $MACHINE_ID == "wcoss2" ]]; then
+#      module reset
+#   else
+#      module purge
+#   fi
+#   module use $PATHTR/modulefiles
+#   if [[ $compiler == "intel" ]]; then
+#      modulefile=${MACHINE_ID}
+#   else
+#      modulefile=${MACHINE_ID}_${compiler}
+#   fi
+#   if [ -f "${PATHTR}/modulefiles/${modulefile}" -o -f "${PATHTR}/modulefiles/${modulefile}.lua" ]; then
+#      echo "Building for machine ${MACHINE_ID}, compiler ${compiler}"
+#   else
+#      echo "Modulefile does not exist for machine ${MACHINE_ID}, compiler ${compiler}"
+#      exit 1
+#   fi
+#   module load $modulefile
    module list
-fi
+#fi
 
 rm -rf build install
 mkdir build && cd build
